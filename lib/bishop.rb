@@ -1,6 +1,6 @@
 class Bishop < Piece
-  def initialize(color, position)
-    super(color, position)
+  def initialize(color, pos, board)
+    super(color, pos, board)
     @symbol = color == :white ? '♗' : '♝'
   end
 
