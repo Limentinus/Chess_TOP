@@ -1,47 +1,49 @@
 class Game
-  attr_reader :board, :input_output, :current_player
-
   def initialize(input_output)
-    @board = Board.new
     @input_output = input_output
-    @current_player = :white
+    @board = Board.new
+    @players = {
+      white: Player.new(:white, @input_output.get_player_name(:white)),
+      black: Player.new(:black, @input_output.get_player_name(:black))
+    }
+    @current_player = @players[:white]
   end
 
   def play
     until game_over?
-      input_output.display_board(@board)
-      move = input_output.get_move_input
-      make_move(move)
+      begin
+        @input_output.display(@board)
+        start_pos, end_pos = get_move
+        @board.move_piece(start_pos, end_pos, @current_player.color)
+      rescue StandardError => e
+        @input_output.display_error_message(e.message)
+        retry
+      end
       switch_players
     end
-    declare_winner
+    end_game
   end
 
   private
 
+  def get_move
+    start_pos = @input_output.get_start_pos
+    end_pos = @input_output.get_end_pos
+    [start_pos, end_pos]
+  end
+
   def game_over?
-    # Return true if the game is over (checkmate or stalemate)
-    # This method needs to be defined.
-  end
-
-  def prompt_for_move
-    # Ask the current player for their move.
-    # Return their move.
-    # This method needs to be defined.
-  end
-
-  def make_move(move)
-    # Use the @board object's methods to make the move.
-    # This method needs to be defined.
+    # Placeholder - you'll need to implement this method
+    false
   end
 
   def switch_players
-    @current_player = @current_player == :white ? :black : :white
+    @current_player = @current_player == @players[:white] ? @players[:black] : @players[:white]
   end
 
-  def declare_winner
-    # Declare the winner of the game.
-    # This method needs to be defined.
+  def end_game
+    # Placeholder - you'll need to implement this method
   end
 end
+
 
