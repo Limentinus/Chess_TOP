@@ -15,20 +15,6 @@ class Board
     setup_pieces
   end
 
-  def display
-    puts "  a b c d e f g h".colorize(:blue)
-    @grid.each_with_index do |row, idx|
-      print "#{8 - idx} ".colorize(:blue)
-      row.each_with_index do |piece, col_idx|
-        background = (idx + col_idx).odd? ? :light_black : :light_white
-        symbol = piece.nil? ? "  ".colorize(background: background) : "#{piece.symbol} ".colorize(color: piece.color == :white ? :white : :black, background: background)
-        print symbol
-      end
-      puts "#{8 - idx}".colorize(:blue)
-    end
-    puts "  a b c d e f g h".colorize(:blue)
-  end
-
   def move_piece(start_pos, end_pos, color)
     raise 'start position is empty' if empty?(start_pos)
 
@@ -90,8 +76,3 @@ class Board
   
 end
 
-
-
-
-test = Board.new
-test.display
