@@ -33,9 +33,9 @@ class Game
   end
 
   def game_over?
-    # Placeholder - you'll need to implement this method
-    false
+    @board.in_checkmate?(@current_player.color)
   end
+  
 
   def switch_players
     @current_player = @current_player == @players[:white] ? @players[:black] : @players[:white]
