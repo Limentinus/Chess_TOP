@@ -20,6 +20,23 @@ class InputOutput
     puts "  a b c d e f g h".colorize(:blue)
   end
 
+  def get_player_name(color)
+    puts "Please enter the name of the #{color} player:"
+    gets.chomp
+  end
+
+  def display_message(message)
+    puts message
+  end
+
+  def display_error_message(message)
+    puts message.colorize(:red)
+  end
+
+  def display_success_message(message)
+    puts message.colorize(:green)
+  end
+
   def get_start_pos
     puts "Enter the position of the piece you want to move (e.g., 'e2'):"
     get_pos
