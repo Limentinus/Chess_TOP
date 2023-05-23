@@ -42,8 +42,14 @@ class Game
   end
 
   def end_game
-    # Placeholder - you'll need to implement this method
+    @input_output.display(@board)
+    if @board.in_checkmate?(@current_player.color)
+      @input_output.display_winner_message(@current_player.color)
+    else
+      @input_output.display_draw_message
+    end
   end
+  
 end
 
 
