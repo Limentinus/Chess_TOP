@@ -37,6 +37,14 @@ class InputOutput
     puts message.colorize(:green)
   end
 
+  def display_winner_message(color)
+    puts "#{color.to_s.capitalize} player wins!"
+  end
+
+  def display_draw_message
+    puts "The game ends in a draw."
+  end
+  
   def get_start_pos
     puts "Enter the position of the piece you want to move (e.g., 'e2'):"
     get_pos

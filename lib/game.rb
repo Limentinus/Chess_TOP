@@ -33,9 +33,8 @@ class Game
   end
 
   def game_over?
-    @board.in_checkmate?(@current_player.color)
+    @board.in_checkmate?(@current_player.color) || @board.stalemate?(@current_player.color) || @board.draw?
   end
-  
 
   def switch_players
     @current_player = @current_player == @players[:white] ? @players[:black] : @players[:white]
@@ -44,11 +43,13 @@ class Game
   def end_game
     @input_output.display(@board)
     if @board.in_checkmate?(@current_player.color)
+      switch_players
       @input_output.display_winner_message(@current_player.color)
     else
       @input_output.display_draw_message
     end
   end
+  
   
 end
 

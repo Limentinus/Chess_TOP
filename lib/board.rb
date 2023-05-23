@@ -40,7 +40,26 @@ class Board
     !empty?(pos) && self[pos].color != color
   end
 
+  def in_check?(color)
+    king_pos = find_king(color).position
+    enemies = grid.flatten.compact.select { |piece| piece.color != color }
+
+    enemies.any? { |enemy| enemy.moves.include?(king_pos) }
+  end
+
+  def in_checkmate?(color)
+    return false unless in_check?(color)
+
+    pieces = grid.flatten.compact.select { |piece| piece.color == color }
+    pieces.all? { |piece| piece.valid_moves.empty? }
+  end
+
   private
+
+  def find_king(color)
+    king = grid.flatten.compact.find { |piece| piece.is_a?(King) && piece.color == color }
+    king || (raise 'king not found')
+  end
 
   def move_piece!(start_pos, end_pos)
     piece = self[start_pos]
