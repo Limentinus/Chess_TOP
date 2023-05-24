@@ -48,17 +48,24 @@ class Board
   end
 
   def in_checkmate?(color)
-    return false unless in_check?(color)
+    in_check?(color) && !has_valid_moves?(color)
+  end
 
-    pieces = grid.flatten.compact.select { |piece| piece.color == color }
-    pieces.all? { |piece| piece.valid_moves.empty? }
+  def in_stalemate?(color)
+    !in_check?(color) && !has_valid_moves?(color)
+  end
+  
+  def has_valid_moves?(color)
+    pieces = find_pieces(color)
+    pieces.any? do |piece|
+      piece.valid_moves.any? { |move| valid_move?(move) }
+    end
   end
 
   private
 
-  def find_king(color)
-    king = grid.flatten.compact.find { |piece| piece.is_a?(King) && piece.color == color }
-    king || (raise 'king not found')
+  def find_pieces(color)
+    grid.flatten.compact.select { |piece| piece.color == color }
   end
 
   def move_piece!(start_pos, end_pos)
