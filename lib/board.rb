@@ -21,7 +21,6 @@ class Board
     piece = self[start_pos]
     
     raise 'You must move your own piece' if piece.color != color
-    p piece.valid_moves(self)
     raise 'Piece cannot move to end_pos' unless piece.valid_moves(self).include?(end_pos)
   
     move_piece!(start_pos, end_pos)
@@ -41,8 +40,11 @@ class Board
   end
 
   def valid_move?(pos)
-    pos.all? { |coord| coord.between?(0, 7) }
+    return false unless pos.is_a?(Array)
+    return false unless pos.length == 2
+    pos.all? { |coord| coord.is_a?(Integer) && coord.between?(0, 7) }
   end
+  
 
   def empty?(pos)
     self[pos].nil?
