@@ -13,6 +13,10 @@ class Piece
     raise NotImplementedError, "Subclasses must define 'valid_move?'."
   end
 
+  def move_into_check?(end_pos)
+    board.simulate_move(pos, end_pos)
+  end
+
   def to_s
     symbol.to_s
   end
