@@ -11,7 +11,7 @@ class Knight < Piece
     knight_moves = [[-2, -1], [-2, 1], [2, -1], [2, 1], [-1, -2], [-1, 2], [1, -2], [1, 2]]
 
     knight_moves.each do |dx, dy|
-      x, y = position
+      x, y = pos
       move = [x + dx, y + dy]
 
       if board.valid_move?(move) && (board.empty?(move) || board.enemy?(move, color))

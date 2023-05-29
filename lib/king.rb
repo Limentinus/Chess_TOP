@@ -11,7 +11,7 @@ class King < Piece
     all_directions = [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]]
 
     all_directions.each do |dx, dy|
-      x, y = position
+      x, y = pos
       move = [x + dx, y + dy]
 
       if board.valid_move?(move) && (board.empty?(move) || board.enemy?(move, color))

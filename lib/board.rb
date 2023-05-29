@@ -55,10 +55,10 @@ class Board
   end
 
   def in_check?(color)
-    king_pos = find_king(color).position
+    king_pos = find_king(color).pos
     enemies = grid.flatten.compact.select { |piece| piece.color != color }
 
-    enemies.any? { |enemy| enemy.moves.include?(king_pos) }
+    enemies.any? { |enemy| enemy.valid_moves(self).include?(king_pos) }
   end
 
   def in_checkmate?(color)

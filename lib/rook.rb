@@ -12,7 +12,7 @@ class Rook < Piece
 
     straight_lines.each do |dx, dy|
       1.upto(7) do |step|
-        x, y = position
+        x, y = pos
         move = [x + step * dx, y + step * dy]
 
         if board.valid_move?(move)

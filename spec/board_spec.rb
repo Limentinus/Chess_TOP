@@ -87,9 +87,62 @@ describe Board do
     end
   end
 
+  describe "#empty?" do
+    let(:board) { Board.new }
   
-  describe '#in_check?' do
-    # Write your tests here
+    context "when position is occupied" do
+      it "returns false" do
+        expect(board.empty?([6, 0])).to be(false)
+      end
+    end
+  
+    context "when position is empty" do
+      it "returns true" do
+        expect(board.empty?([3, 0])).to be(true)
+      end
+    end
+  end
+
+  describe "#enemy?" do
+    let(:board) { Board.new }
+  
+    context "when position is occupied by an enemy piece" do
+      it "returns true" do
+        expect(board.enemy?([1, 0], :white)).to be(true)
+      end
+    end
+  
+    context "when position is occupied by a friendly piece" do
+      it "returns false" do
+        expect(board.enemy?([6, 0], :white)).to be(false)
+      end
+    end
+  
+    context "when position is empty" do
+      it "returns false" do
+        expect(board.enemy?([3, 0], :white)).to be(false)
+      end
+    end
+  end
+
+  describe "#in_check?" do
+    let(:board) { Board.new }
+  
+    context "when the king is not under attack" do
+      it "returns false" do
+        expect(board.in_check?(:white)).to be false
+      end
+    end
+  
+    context "when the king is under attack" do
+      it "returns true" do
+        # Moving opponent's piece to a position where it can attack the king
+        board.move_piece([6, 5], [5, 5], :white) # move f2 pawn to f3
+        board.move_piece([1, 4], [2, 4], :black) # move e7 pawn to e6
+        board.move_piece([0, 3], [4, 7], :black) # move black queen to h4
+        expect(board.in_check?(:white)).to be true
+      end
+    end
   end
 
   describe '#in_checkmate?' do

@@ -6,7 +6,7 @@ class Queen < Piece
 
   def valid_moves(board)
     # The queen's valid moves are a combination of the rook's and bishop's
-    Rook.new(color, position).valid_moves(board) + Bishop.new(color, position).valid_moves(board)
+    Rook.new(color, pos, board).valid_moves(board) + Bishop.new(color, pos, board).valid_moves(board)
   end
 end
 
