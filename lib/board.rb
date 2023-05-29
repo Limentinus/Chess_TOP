@@ -17,16 +17,16 @@ class Board
 
   def move_piece(start_pos, end_pos, color)
     raise 'start position is empty' if empty?(start_pos)
-
+  
     piece = self[start_pos]
-    if piece.color != color
-      raise 'You must move your own piece'
-    elsif !piece.valid_moves(self).include?(end_pos)
-      raise 'Piece cannot move to end_pos'
-    end
-
+    
+    raise 'You must move your own piece' if piece.color != color
+    p piece.valid_moves(self)
+    raise 'Piece cannot move to end_pos' unless piece.valid_moves(self).include?(end_pos)
+  
     move_piece!(start_pos, end_pos)
   end
+  
 
   def simulate_move(start_pos, end_pos)
     captured_piece = move_piece!(start_pos, end_pos)
@@ -91,7 +91,7 @@ class Board
 
     self[end_pos] = piece
     self[start_pos] = nil
-    piece.position = end_pos
+    piece.pos = end_pos
 
     # Return the captured piece so that it can be replaced if necessary
     captured_piece
