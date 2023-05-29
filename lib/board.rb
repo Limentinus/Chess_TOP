@@ -10,9 +10,9 @@ require_relative 'king'
 class Board
   attr_accessor :grid
 
-  def initialize
-    @grid = Array.new(8) { Array.new(8) }
-    setup_pieces
+  def initialize(grid = nil)
+    @grid = grid || Array.new(8) { Array.new(8) }
+    setup_pieces unless grid
   end
 
   def move_piece(start_pos, end_pos, color)
