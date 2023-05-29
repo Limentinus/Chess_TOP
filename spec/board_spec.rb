@@ -28,16 +28,32 @@ describe Board do
     end
   end
 
-  describe '#move_piece' do
-    context 'when the move is valid' do
-      it 'moves the piece from the start position to the end position' do
-        # Write your tests here
+  describe "#move_piece" do
+    let(:board) { Board.new }
+
+    context "when start position is empty" do
+      it "raises an error" do
+        expect { board.move_piece([3, 0], [1, 0], :white) }.to raise_error('start position is empty')
       end
     end
 
-    context 'when the move is invalid' do
-      it 'raises an error' do
-        # Write your tests here
+    context "when trying to move an opponent's piece" do
+      it "raises an error" do
+        expect { board.move_piece([6, 0], [5, 0], :black) }.to raise_error('You must move your own piece')
+      end
+    end
+
+    context "when end position is invalid for the piece" do
+      it "raises an error" do
+        expect { board.move_piece([6, 0], [3, 0], :white) }.to raise_error('Piece cannot move to end_pos')
+      end
+    end
+
+    context "when move is valid" do
+      it "moves the piece to the desired location" do
+        board.move_piece([6, 0], [4, 0], :white)
+        expect(board.grid[4][0]).to be_a(Pawn)
+        expect(board.grid[6][0]).to be_nil
       end
     end
   end
