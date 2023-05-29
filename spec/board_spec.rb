@@ -58,6 +58,36 @@ describe Board do
     end
   end
 
+  describe "#valid_move?" do
+    let(:board) { Board.new }
+  
+    context "when position is within the board" do
+      it "returns true" do
+        expect(board.valid_move?([4, 4])).to be(true)
+        expect(board.valid_move?([0, 0])).to be(true)
+        expect(board.valid_move?([7, 7])).to be(true)
+      end
+    end
+  
+    context "when position is outside the board" do
+      it "returns false" do
+        expect(board.valid_move?([-1, 0])).to be(false)
+        expect(board.valid_move?([0, -1])).to be(false)
+        expect(board.valid_move?([8, 7])).to be(false)
+        expect(board.valid_move?([7, 8])).to be(false)
+      end
+    end
+  
+    context "when position is not an array or does not have two elements" do
+      it "returns false" do
+        expect(board.valid_move?(nil)).to be(false)
+        expect(board.valid_move?([4])).to be(false)
+        expect(board.valid_move?([4, 4, 4])).to be(false)
+      end
+    end
+  end
+
+  
   describe '#in_check?' do
     # Write your tests here
   end
