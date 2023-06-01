@@ -6,14 +6,50 @@ require_relative 'knight'
 require_relative 'bishop'
 require_relative 'queen'
 require_relative 'king'
+require_relative 'input_output'
 
 class Board
   attr_accessor :grid
 
-  def initialize(grid = nil)
-    @grid = grid || Array.new(8) { Array.new(8) }
-    setup_pieces unless grid
+  def initialize(setup = true)
+    @grid = Array.new(8) { Array.new(8) }
+    setup_pieces if setup
   end
+
+  def setup_from_fen(fen_str)
+    pieces = {
+      'p' => Pawn,
+      'r' => Rook,
+      'n' => Knight,
+      'b' => Bishop,
+      'q' => Queen,
+      'k' => King,
+      'P' => Pawn,
+      'R' => Rook,
+      'N' => Knight,
+      'B' => Bishop,
+      'Q' => Queen,
+      'K' => King
+    }
+
+    piece_placement, *rest = fen_str.split(' ') # use only the first part of the FEN string
+    rows = piece_placement.split('/')
+    rows.each_with_index do |row, i|
+    file = 0
+
+      row.chars.each do |char|
+        if char.to_i.positive?
+          file += char.to_i  # if it's a digit, it represents empty squares, so move the file index
+        elsif pieces.include?(char)
+          piece_class = pieces[char]
+          color = char == char.downcase ? :black : :white
+          @grid[i][file] = piece_class.new(color, [i, file], self)
+          file += 1
+        end
+      end
+    end
+  end
+  
 
   def move_piece(start_pos, end_pos, color)
     raise 'start position is empty' if empty?(start_pos)
@@ -72,7 +108,7 @@ class Board
   def has_valid_moves?(color)
     pieces = find_pieces(color)
     pieces.any? do |piece|
-      piece.valid_moves.any? { |move| valid_move?(move) }
+      piece.valid_moves(self).any? { |move| valid_move?(move) }
     end
   end
 
