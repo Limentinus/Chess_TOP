@@ -26,6 +26,7 @@ describe Board do
       expect(white_row).to eq(white_pieces)
       expect(black_row).to eq(black_pieces)
     end
+
   end
 
   describe "#move_piece" do
@@ -145,9 +146,80 @@ describe Board do
     end
   end
 
-  describe '#in_checkmate?' do
-    # Write your tests here
+  describe "#in_checkmate?" do
+    context "when the king is not in check" do
+      it "returns false" do
+        board = Board.new
+        expect(board.in_checkmate?(:white)).to be false
+        expect(board.in_checkmate?(:black)).to be false
+      end
+    end
+  
+    context "when the king is in check but can move out of check" do
+      it "returns false" do
+        check_board = Board.new(Array.new(8) { Array.new(8) })
+        
+        check_board.grid[0][0] = Rook.new(:black, [0, 0], check_board)
+        check_board.grid[1][1] = King.new(:white, [1, 1], check_board)
+        check_board.grid[7][7] = King.new(:black, [7, 7], check_board)
+        
+        expect(check_board.in_checkmate?(:white)).to be false
+      end
+    end
+  
+    context "when the king is in checkmate" do
+      it "returns true" do
+        mate_board = Board.new(false)
+        
+        fen_string = '8/8/8/8/kQ6/8/8/1R5K b - - 0 1'
+        mate_board.setup_from_fen(fen_string)
+        
+        p mate_board
+
+        expect(mate_board.in_checkmate?(:black)).to be true
+      end
+    end
   end
 
-  # Add more tests for other methods in the Board class
+  describe "#has_valid_moves?" do
+    let(:board) { Board.new }
+  
+    context "when there are valid moves available for the given color" do
+      it "returns true" do
+        expect(board.has_valid_moves?(:white)).to be true
+      end
+    end
+  
+    context "when there are no valid moves available for the given color" do
+      it "returns false" do
+        mate_board = Board.new(false)
+        
+        fen_string = '8/8/8/8/kQ6/8/8/1R5K b - - 0 1'
+        mate_board.setup_from_fen(fen_string)
+        
+        expect(mate_board.has_valid_moves?(:black)).to be false
+      end
+    end
+  end
+
+  describe "#setup_from_fen" do
+    it "correctly sets up the board" do
+      fen_string = '8/8/8/8/kQ6/8/8/1R5K b - - 0 1'
+      board = Board.new(false)
+      board.setup_from_fen(fen_string)
+
+      expect(board.grid[4][0]).to be_a(King)
+      expect(board.grid[4][0].color).to eq(:black)
+  
+      expect(board.grid[4][1]).to be_a(Queen)
+      expect(board.grid[4][1].color).to eq(:white)
+  
+      expect(board.grid[7][1]).to be_a(Rook)
+      expect(board.grid[7][1].color).to eq(:white)
+  
+      expect(board.grid[7][7]).to be_a(King)
+      expect(board.grid[7][7].color).to eq(:white)
+    end
+  end
+
 end
