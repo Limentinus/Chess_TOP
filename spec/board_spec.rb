@@ -30,7 +30,7 @@ describe Board do
   end
 
   describe "#move_piece" do
-    let(:board) { Board.new }
+    subject(:empty_board) { Board.new(false) }
 
     context "when start position is empty" do
       it "raises an error" do
@@ -50,13 +50,92 @@ describe Board do
       end
     end
 
-    context "when move is valid" do
-      it "moves the piece to the desired location" do
-        board.move_piece([6, 0], [4, 0], :white)
-        expect(board.grid[4][0]).to be_a(Pawn)
-        expect(board.grid[6][0]).to be_nil
+    context 'when moving a pawn' do
+      
+      it 'updates the board correctly' do
+        # Setup
+        initial_position = [6, 0]
+        final_position = [4, 0]
+        board.move_piece(initial_position, final_position, :white)
+  
+        # Expectations
+        expect(board.piece_at(final_position).class).to eq(Pawn)
+        expect(board.piece_at(initial_position)).to be_nil
       end
     end
+  
+    context 'when moving a queen' do
+      it 'updates the board correctly' do
+        # Setup
+        board.move_piece([6, 4], [5, 4], :white) # pawn e2 to e3
+        board.move_piece([1, 4], [2, 4], :black) # pawn e7 to e6
+        initial_position = [7, 3]
+        final_position = [5, 5]
+        board.move_piece(initial_position, final_position, :white) # queen d1 to f3
+    
+        # Expectations
+        expect(board.piece_at(final_position).class).to eq(Queen)
+        expect(board.piece_at(initial_position)).to be_nil
+      end
+    end
+
+    context 'when moving a rook' do
+      it 'updates the board correctly' do
+        # Setup
+        board.move_piece([6, 0], [4, 0], :white) # move a2 pawn to a4
+        initial_position = [7, 0]
+        final_position = [5, 0]
+        board.move_piece(initial_position, final_position, :white)
+    
+        # Expectations
+        expect(board.piece_at(final_position).class).to eq(Rook)
+        expect(board.piece_at(initial_position)).to be_nil
+      end
+    end
+    
+    context 'when moving a knight' do
+      it 'updates the board correctly' do
+        # Setup
+
+        initial_position = [7, 1]
+        final_position = [5, 2]
+        
+        board.move_piece(initial_position, final_position, :white)
+    
+        # Expectations
+        expect(board.piece_at(final_position).class).to eq(Knight)
+        expect(board.piece_at(initial_position)).to be_nil
+      end
+    end
+    
+    context 'when moving a bishop' do
+      it 'updates the board correctly' do
+        # Setup
+        board.move_piece([6, 3], [5, 3], :white) # pawn d2 to d3
+        initial_position = [7, 2]
+        final_position = [5, 4]
+        board.move_piece(initial_position, final_position, :white)
+    
+        # Expectations
+        expect(board.piece_at(final_position).class).to eq(Bishop)
+        expect(board.piece_at(initial_position)).to be_nil
+      end
+    end
+    
+    context 'when moving a king' do
+      it 'updates the board correctly' do
+        # Setup
+        board.move_piece([6, 4], [5, 4], :white) # pawn e2 to e3
+        initial_position = [7, 4]
+        final_position = [6, 4]
+        board.move_piece(initial_position, final_position, :white)
+    
+        # Expectations
+        expect(board.piece_at(final_position).class).to eq(King)
+        expect(board.piece_at(initial_position)).to be_nil
+      end
+    end
+  
   end
 
   describe "#valid_move?" do
@@ -127,21 +206,20 @@ describe Board do
   end
 
   describe "#in_check?" do
-    let(:board) { Board.new }
-  
+    
     context "when the king is not under attack" do
+      subject(:check_board) { Board.new }
       it "returns false" do
-        expect(board.in_check?(:white)).to be false
+        expect(check_board.in_check?(:white)).to be false
       end
     end
   
     context "when the king is under attack" do
+      subject(:in_check_board) { Board.new(false) }
       it "returns true" do
-        # Moving opponent's piece to a position where it can attack the king
-        board.move_piece([6, 5], [5, 5], :white) # move f2 pawn to f3
-        board.move_piece([1, 4], [2, 4], :black) # move e7 pawn to e6
-        board.move_piece([0, 3], [4, 7], :black) # move black queen to h4
-        expect(board.in_check?(:white)).to be true
+        fen_string = 'rnb1kbnr/pppp1ppp/4p3/8/7q/2P2P2/PP1PP1PP/RNBQKBNR w KQkq - 0 1'
+        in_check_board.setup_from_fen(fen_string)
+        expect(in_check_board.in_check?(:white)).to be true
       end
     end
   end
@@ -173,10 +251,32 @@ describe Board do
         
         fen_string = '8/8/8/8/kQ6/8/8/1R5K b - - 0 1'
         mate_board.setup_from_fen(fen_string)
-        
-        p mate_board
 
         expect(mate_board.in_checkmate?(:black)).to be true
+      end
+    end
+  end
+
+  describe '#in_stalemate?' do
+    subject(:stalemate_board) { Board.new(false) }
+  
+    context 'when it is a stalemate' do
+      it 'returns true' do
+        # Setup a stalemate scenario
+        fen_string = '7k/8/8/8/8/6q1/8/7K w - - 0 1'
+        stalemate_board.setup_from_fen(fen_string)
+        expect(stalemate_board.in_stalemate?(:white)).to be true
+      end
+    end
+  
+    context 'when it is not a stalemate' do
+      it 'returns false' do
+        # Setup a scenario where it's not a stalemate
+        # White king on e1, black king on e8, white pawn on e2, black pawn on e7
+        fen_string = '4k3/4p3/8/8/8/8/4P3/4K3 w - - 0 1'
+        stalemate_board.setup_from_fen(fen_string)
+  
+        expect(stalemate_board.in_stalemate?(:white)).to be false
       end
     end
   end
@@ -198,6 +298,17 @@ describe Board do
         mate_board.setup_from_fen(fen_string)
         
         expect(mate_board.has_valid_moves?(:black)).to be false
+      end
+    end
+
+    context "when the kind is in stalemate" do
+      it "returns false" do
+        mate_board = Board.new(false)
+        
+        fen_string = '7k/8/8/8/8/6q1/8/7K w - - 0 1'
+        mate_board.setup_from_fen(fen_string)
+        
+        expect(mate_board.has_valid_moves?(:white)).to be false
       end
     end
   end
@@ -222,4 +333,56 @@ describe Board do
     end
   end
 
+  describe "#move_into_check?" do
+    subject(:simulate_board) { Board.new }
+  
+    context "when moving a piece puts the king in check" do
+      it "returns true" do
+        # Setup a scenario where a move would put the king in check
+        simulate_board.move_piece([6, 4], [4, 4], :white) 
+        simulate_board.move_piece([1, 4], [3, 4], :black) 
+        simulate_board.move_piece([6, 0], [4, 0], :white) 
+        simulate_board.move_piece([0, 3], [4, 7], :black) 
+
+        expect(simulate_board.move_into_check?([6, 5], [5, 5])).to be true
+      end
+    end
+  
+    context "when moving a piece does not put the king in check" do
+      it "returns false" do
+        # Setup a scenario where a move would not put the king in check
+        expect(simulate_board.move_into_check?([6, 3], [5, 3])).to be false
+      end
+    end
+  
+    context "when moving a piece captures another piece" do
+      it "returns the captured piece to its original position" do
+        # Set up a scenario where a piece is captured
+        simulate_board.move_piece([6, 4], [4, 4], :white)  # Move white pawn forward
+        simulate_board.move_piece([1, 3], [3, 3], :black)  # Move black pawn forward
+        simulate_board.move_into_check?([4, 4], [3, 3])       # Capture black pawn
+        expect(simulate_board.grid[3][3]).to be_a(Pawn)
+        expect(simulate_board.grid[3][3].color).to eq(:black)
+      end
+    end
+  end
+
+  describe '#find_king' do
+    context 'when there is only one king on the board' do
+      it 'returns the king' do
+        # Setup
+        board = Board.new(false)
+        king_position = [0, 4]
+        king = King.new(:white, king_position, board)
+        board.grid[0][4] = king
+  
+        # Action
+        found_king = board.send(:find_king, :white)
+  
+        # Expectations
+        expect(found_king).to eq(king)
+        expect(found_king.pos).to eq(king_position)
+      end
+    end
+  end
 end
