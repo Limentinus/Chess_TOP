@@ -63,14 +63,13 @@ class Board
   end
   
 
-  def simulate_move(start_pos, end_pos)
+  def move_into_check?(start_pos, end_pos)
     captured_piece = move_piece!(start_pos, end_pos)
     in_check = in_check?(self[end_pos].color)
-    
     # Undo the move
     move_piece!(end_pos, start_pos)
     self[end_pos] = captured_piece
-    self[end_pos].position = end_pos if captured_piece
+    self[end_pos].pos = end_pos if captured_piece
 
     in_check
   end
@@ -94,7 +93,7 @@ class Board
     king_pos = find_king(color).pos
     enemies = grid.flatten.compact.select { |piece| piece.color != color }
 
-    enemies.any? { |enemy| enemy.valid_moves(self).include?(king_pos) }
+    enemies.any? { |enemy| enemy.potential_moves(self).include?(king_pos) }
   end
 
   def in_checkmate?(color)
@@ -111,6 +110,12 @@ class Board
       piece.valid_moves(self).any? { |move| valid_move?(move) }
     end
   end
+  
+  def piece_at(pos)
+    row, col = pos
+    grid[row][col]
+  end
+  
 
   private
 
@@ -125,6 +130,7 @@ class Board
 
   def move_piece!(start_pos, end_pos)
     piece = self[start_pos]
+    raise "no piece at #{start_pos}" if piece.nil?
     captured_piece = self[end_pos] # Added this line to store the captured piece, if any
 
     self[end_pos] = piece
@@ -139,13 +145,15 @@ class Board
     x, y = pos
     @grid[x][y]
   end
+  
 
   def []=(pos, value)
     x, y = pos
     @grid[x][y] = value
   end
 
- def setup_pieces
+
+  def setup_pieces
     # Setup pawns
     8.times do |i|
       @grid[1][i] = Pawn.new(:black, [1, i], self)
