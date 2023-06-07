@@ -4,7 +4,13 @@ class King < Piece
     @symbol = color == :white ? '♔' : '♚'
   end
 
+  # This is the method you will use when moving the King
   def valid_moves(board)
+    potential_moves(board).reject { |end_pos| board.move_into_check?(pos, end_pos) }
+  end
+
+  # This is the method you will use when checking if the King is in check
+  def potential_moves(board)
     moves = []
 
     # Define the king's one square movement in all directions

@@ -5,6 +5,10 @@ class Pawn < Piece
   end
 
   def valid_moves(board)
+    potential_moves(board).reject { |end_pos| board.move_into_check?(pos, end_pos) }
+  end
+
+  def potential_moves(board)
     moves = []
     x, y = @pos
     direction = color == :white ? -1 : 1
@@ -23,6 +27,7 @@ class Pawn < Piece
       moves << move if board.valid_move?(move) && board.enemy?(move, color)
     end
 
+    # moves.reject! { |end_pos| board.move_into_check?(pos, end_pos) }
     moves
   end
 

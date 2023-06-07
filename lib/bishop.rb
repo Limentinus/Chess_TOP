@@ -5,6 +5,10 @@ class Bishop < Piece
   end
 
   def valid_moves(board)
+    potential_moves(board).reject { |end_pos| board.move_into_check?(pos, end_pos) }
+  end
+
+  def potential_moves(board)
     moves = []
 
     # Define the bishop's diagonal movement

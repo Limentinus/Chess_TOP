@@ -5,6 +5,10 @@ class Knight < Piece
   end
 
   def valid_moves(board)
+    potential_moves(board).reject { |end_pos| board.move_into_check?(pos, end_pos) }
+  end
+
+  def potential_moves(board)
     moves = []
 
     # Define the knight's L-shaped movement
@@ -19,6 +23,7 @@ class Knight < Piece
       end
     end
 
+    # moves.reject! { |end_pos| board.move_into_check?(pos, end_pos) }
     moves
   end
 end
