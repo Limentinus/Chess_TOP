@@ -1,6 +1,9 @@
+require_relative '../lib/player'
+require_relative '../lib/input_output'
+
 class Game
-  def initialize(input_output)
-    @input_output = input_output
+  def initialize
+    @input_output = InputOutput.new
     @board = Board.new
     @players = {
       white: Player.new(:white, @input_output.get_player_name(:white)),
@@ -13,6 +16,7 @@ class Game
     until game_over?
       begin
         @input_output.display(@board)
+        @input_output.display_message("It's #{@current_player.name}'s turn, playing as #{@current_player.color.to_s.capitalize}.")
         start_pos, end_pos = get_move
         @board.move_piece(start_pos, end_pos, @current_player.color)
       rescue StandardError => e
@@ -33,7 +37,7 @@ class Game
   end
 
   def game_over?
-    @board.in_checkmate?(@current_player.color) || @board.stalemate?(@current_player.color) || @board.draw?
+    @board.in_checkmate?(@current_player.color) || @board.in_stalemate?(@current_player.color) #|| @board.draw?
   end
 
   def switch_players
@@ -44,7 +48,7 @@ class Game
     @input_output.display(@board)
     if @board.in_checkmate?(@current_player.color)
       switch_players
-      @input_output.display_winner_message(@current_player.color)
+      @input_output.display_winner_message(@current_player.name, @current_player.color)
     else
       @input_output.display_draw_message
     end
@@ -52,5 +56,4 @@ class Game
   
   
 end
-
 
