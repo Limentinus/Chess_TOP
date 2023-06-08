@@ -37,9 +37,9 @@ class InputOutput
     puts message.colorize(:green)
   end
 
-  def display_winner_message(color)
-    puts "#{color.to_s.capitalize} player wins!"
-  end
+  def display_winner_message(name, color)
+    puts "#{name}, the #{color.to_s.capitalize} player, wins!"
+  end  
 
   def display_draw_message
     puts "The game ends in a draw."
@@ -59,6 +59,12 @@ class InputOutput
 
   def get_pos
     pos = gets.chomp
+
+    # validate input format
+    unless pos.match?(/^[a-hA-H][1-8]$/)
+      puts "Invalid input. Please enter a position in the format 'e2'."
+      return get_pos
+    end
     # convert from chess notation to board array indices
     [8 - pos[1].to_i, pos[0].downcase.ord - 'a'.ord]
   end
