@@ -46,7 +46,7 @@ describe Game do
       allow(input_output).to receive(:display)
       allow(game.instance_variable_get(:@board)).to receive(:in_checkmate?).with(:white).and_return(true)
       allow(input_output).to receive(:display_winner_message)
-      expect(input_output).to receive(:display_winner_message).with(:white)
+      expect(input_output).to receive(:display_winner_message).with(:black)
       game.send(:end_game)
     end
 
